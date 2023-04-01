@@ -25,14 +25,3 @@ In order to have a copy of the project up and running locally, you will need to 
    - Python 2.7 or greater.
    - AWS Account.
 
-### Installation
-   - Follow the instructions given [here](https://www.ryanmerlin.com/2019/07/apache-airflow-installation-on-ubuntu-18-04-18-10/) to setup apache airflow locally.
-   - After setting up airflow, run  the commands `airflow scheduler` and `airflow webserver` which will spin up the web server on localhost using port 8080 http://0.0.0.0:8080
-   - Create a redshift cluster.
-   - Retrieve your `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` and add them well as your redshift database credentials to `Connections` on the Admin tab of the airflow UI.
-   - You can then go ahead and Trigger the DAG and sit back and watch as the magic happens.
-
-## Built With
-- Python and Apache Airflow.
-
-
