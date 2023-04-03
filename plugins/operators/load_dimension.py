@@ -5,7 +5,7 @@ from airflow.utils.decorators import apply_defaults
 class LoadDimensionOperator(BaseOperator):
 
     """
-    Operator that loads data from staging table to the fact table.
+    Operator that loads data from staging table to the dimension table.
     """
     ui_color = '#80BD9E'
 
