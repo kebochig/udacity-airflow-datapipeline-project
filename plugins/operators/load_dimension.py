@@ -4,19 +4,48 @@ from airflow.utils.decorators import apply_defaults
 
 class LoadDimensionOperator(BaseOperator):
 
+    """
+    Operator that loads data from staging table to the fact table.
+    """
     ui_color = '#80BD9E'
 
     @apply_defaults
     def __init__(self,
-                 # Define your operators params (with defaults) here
-                 # Example:
-                 # conn_id = your-connection-name
+                 conn_id,
+                 drop_table,
+                 target_table,
+                 create_query,
+                 insert_query,
+                 append,
                  *args, **kwargs):
 
         super(LoadDimensionOperator, self).__init__(*args, **kwargs)
-        # Map params here
-        # Example:
-        # self.conn_id = conn_id
+        self.conn_id = conn_id
+        self.drop_table = drop_table
+        self.target_table = target_table
+        self.create_query = create_query
+        self.insert_query = insert_query
+        self.append = append
 
     def execute(self, context):
-        self.log.info('LoadDimensionOperator not implemented yet')
+        self.hook = PostgresHook(postgres_conn_id=self.conn_id)
+        if self.drop_table:
+            self.log.info('Dropping {} table if it exists...'.format(
+                self.target_table))
+            self.hook.run("DROP TABLE IF EXISTS {}".format(self.target_table))
+            self.log.info(
+                "Table {} has been successfully dropped".format(
+                    self.target_table))
+
+        self.log.info(
+            'Creating {} table if it does not exist...'.format(
+                self.target_table))
+        self.hook.run(self.create_query)
+
+        if not self.append:
+            self.log.info("Removing data from {}".format(self.target_table))
+            self.hook.run("DELETE FROM {}".format(self.target_table))
+
+        self.log.info('Inserting data from staging table...')
+        self.hook.run(self.insert_query)
+        self.log.info("Insert execution complete...")
